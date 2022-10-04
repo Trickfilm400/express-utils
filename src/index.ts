@@ -9,7 +9,7 @@ import { AbstractRoute } from './utils/AbstractRoute';
 import { logger } from './utils/logger';
 import { getUnixTimestamp } from './utils/unixTimestamp';
 import { Config } from './config';
-import { dbConfig, DbConfigInterface } from './config/dbConfig';
+import { dbConfig, DbConfigInterface } from './config/modules/dbConfig';
 import HttpExceptions from './exceptions';
 
 export {

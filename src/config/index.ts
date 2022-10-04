@@ -2,7 +2,7 @@ import { Schema, Config as ConvictConfig } from 'convict';
 import {
   defaultMainConfig,
   DefaultMainConfigInterface,
-} from './defaultMainConfig';
+} from './modules/defaultMainConfig';
 import * as convict from 'convict';
 import * as path from 'path';
 import * as fs from 'fs';

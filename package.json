@@ -38,8 +38,12 @@
   },
   "scripts": {
     "build": "tsc",
-    "eslint": "eslint src/**/*.ts"
+    "eslint": "eslint src/**/*.ts",
+    "docker-healthcheck": "node ./dist/utils/docker-healthcheck.js"
   },
   "author": "Jens Hummel",
-  "license": "MIT"
+  "license": "MIT",
+  "bin": {
+    "docker-healthcheck": "./dist/utils/docker-healthcheck.js"
+  }
 }

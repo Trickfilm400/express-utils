@@ -1,8 +1,6 @@
-import { ValidationErrorItem } from 'joi';
-
-export interface HttpError {
+export interface HttpError<T = any> {
   error: string;
-  errorDetails?: ValidationErrorItem[];
+  errorDetails?: T;
 }
 
 export interface HttpSuccess<T> {

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import HttpException from '../exceptions/HttpException';
+import InternalServerError from '../exceptions/InternalServerError';
 
 const errorMiddleware = (
   error: HttpException,
@@ -8,6 +9,9 @@ const errorMiddleware = (
   next: NextFunction
 ) => {
   try {
+    if (!(error instanceof HttpException)) {
+      error = new InternalServerError(error);
+    }
     const status: number = error.status || 500;
     const fallbackError = { message: 'Something went wrong' };
     const errorBody = error.getBody() || fallbackError;

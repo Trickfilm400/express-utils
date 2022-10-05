@@ -1,5 +1,5 @@
-import { HTTPResponse } from '../../types';
 import { NextFunction, Request, Response } from 'express';
+import { HTTPResponse } from './HttpResponseInterface';
 
 export interface IDefaultController<T> {
   //fetch data

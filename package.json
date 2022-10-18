@@ -1,6 +1,6 @@
 {
   "name": "@kopf02/express-utils",
-  "version": "1.2.1-dev",
+  "version": "1.2.2-dev",
   "description": "Some Wrapper Classes and Methods to speed up express development",
   "repository": {
     "type": "git",
@@ -43,9 +43,9 @@
     "eslint": "eslint src/**/*.ts",
     "docker-healthcheck": "node ./dist/utils/docker-healthcheck.js"
   },
-  "author": "Jens Hummel",
-  "license": "MIT",
   "bin": {
     "docker-healthcheck": "./dist/utils/docker-healthcheck.js"
-  }
+  },
+  "author": "Jens Hummel",
+  "license": "MIT"
 }

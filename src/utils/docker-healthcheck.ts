@@ -2,70 +2,82 @@
 import { RequestOptions } from 'http';
 import * as http from 'http';
 import { Config } from '../config';
+import { HTTPResponse } from '../interfaces/HttpResponseInterface';
 
-new Config({});
-
-interface HTTP_Response {
-  data: {
-    healthy: boolean;
-    date: number;
-  };
+interface IHealthResult {
+  healthy: boolean;
+  date: number;
 }
 
+type HealthResult = HTTPResponse<IHealthResult>;
+
 /**
- * @author Nico Wagner
+ * @author Jens Hummel
  * @version 1.0.0
- * @since 0.1.0 01.07.2021
+ * @since 1.3.0 07.10.2022
  */
 class HealthCheck {
   constructor(runTests = true) {
-    if (runTests) this.runCheckUp();
+    new Config();
+    const options = {
+      port: Config.getConfig().get('port'),
+    };
+
+    if (runTests) this.runCheckUp(options);
   }
 
-  /** Run all the Tests:
-   *   Request the Database Status
-   *   Request a timestamp
-   * @author Nico Wagner
+  private static log(...message: unknown[]) {
+    console.log(new Date(), ...message);
+  }
+
+  /** Run Check and pass to Exit Code
+   * @author Jens Hummel
    * @version 1.0.0
-   * @since 0.1.0 - 01.07.2021 22:48
+   * @since 1.3.0 07.10.2022
    */
-  public runCheckUp() {
-    console.log('Starting CheckUp...');
-    this.makeHTTPRequest({
+  public runCheckUp(options: { port: number }) {
+    HealthCheck.log('Starting CheckUp...');
+    this.executeCheckRequest(options).then(HealthCheck.exitCode);
+  }
+
+  /** Execute API Call and check tests:
+   * Request healthy API Status
+   * @author Nico Wagner, Jens Hummel
+   * @version 1.0.0
+   * @since 1.3.0 07.10.2022
+   */
+
+  public executeCheckRequest(options: { port: number }) {
+    return this.makeHTTPRequest({
       host: 'localhost',
-      port: Config.getConfig().get('port'),
+      port: options.port,
       path: '/health',
     })
       .then((res) => {
-        console.log(new Date(), 'Got HTTP response: ', res);
-        const json: HTTP_Response = JSON.parse(res);
-        console.log(json);
-        if (json.data.healthy) HealthCheck.exitCode(false);
-        else HealthCheck.exitCode(true);
+        HealthCheck.log('Got HTTP response: ', res);
+        const json: HealthResult = JSON.parse(res);
+        return 'data' in json && json.data.healthy;
       })
       .catch(() => {
-        HealthCheck.exitCode(true);
+        return false;
       });
   }
 
   /**
    * Exits the process if parameter is true
-   * @param {boolean} HealthError True: if error occurred and health check failed
+   * @param {boolean} HealthSuccess True: if error occurred and health check failed
    * @private
    * @author Nico Wagner
-   * @version 1.0.0.
-   * @since 0.1.0 01.07.2021
+   * @version 1.0.0
+   * @since 1.3.0 07.10.2022
    */
-  private static exitCode(HealthError: boolean) {
-    if (HealthError) {
-      console.error(
-        new Date(),
-        'Error on healthCheck: NOT HEALTHY... exiting.'
-      );
-      process.exit(1);
+  private static exitCode(HealthSuccess: boolean) {
+    if (HealthSuccess) {
+      HealthCheck.log('Application seems healthy...');
+      process.exit(0);
     }
-    console.log(new Date(), 'Application seems healthy...');
-    process.exit(0);
+    HealthCheck.log('Error on healthCheck: NOT HEALTHY... exiting.');
+    process.exit(1);
   }
 
   /**
@@ -75,14 +87,14 @@ class HealthCheck {
    * @private
    * @author Nico Wagner
    * @version 1.0.0
-   * @since 0.1.0 01.07.2021
+   * @since 1.3.0 07.10.2022
    */
   private makeHTTPRequest(options: RequestOptions): Promise<string> {
     return new Promise((resolve, reject) => {
-      let data = '';
       http
         .request(options, (res) => {
           if (res.statusCode !== 200) return reject();
+          let data = '';
 
           res.on('data', (d) => {
             data += d;
@@ -96,4 +108,4 @@ class HealthCheck {
   }
 }
 
-new HealthCheck(true);
+new HealthCheck();

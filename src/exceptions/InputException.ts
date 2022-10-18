@@ -1,7 +1,8 @@
 import { ValidationErrorItem } from 'joi';
-import { HttpError, HttpExceptions } from '../index';
+import { HttpError } from '../interfaces/HttpResponseInterface';
+import BadRequest from './BadRequest';
 
-class InputException extends HttpExceptions.BadRequest {
+class InputException extends BadRequest {
   private readonly errorDetails: ValidationErrorItem[];
 
   constructor(errorDetails: ValidationErrorItem[]) {

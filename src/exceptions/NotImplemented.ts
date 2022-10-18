@@ -1,8 +1,7 @@
-import { HttpExceptions } from '../index';
+import HttpException from './HttpException';
 
-class NotImplemented extends HttpExceptions.HttpException {
+class NotImplemented extends HttpException {
   constructor() {
-    //todo 501 error code
     super(501, 'Not Implemented');
   }
 }
